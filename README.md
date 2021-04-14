@@ -18,8 +18,8 @@
   * CUDA是与GPU硬件配对的软件平台，能够更容易使用GPU的并行处理能力来加速计算
   * cuDNN是CUDA专门处理深度神经网络的库
   * pytorch使用CUDA十分容易
-    *　t=t.cuda()
-    *　t.to(device)也可
+    * t=t.cuda()
+    * t.to(device)也可
 ##### 5_Tensors Explained - Data Structures Of Deep Learning
 * 什么是Tensor?
   * 从数学上理解：标量、向量、矩阵、n维向量
@@ -82,3 +82,82 @@
   * as_tensor（）的内存共享不适用于列表之类的内置Python数据结构。
   * as_tensor（）调用要求开发人员了解共享功能。这是必要的，这样我们就不会无意中对基础数据进行不必要的更改，从而影响多个对象。
   * 如果两个进程之间对numpy.ndarray和tensor对象有大量的来回操作，那么as_tensor（）的性能改进会更大。但是，如果只有一个加载操作，从性能的角度看应该不会有太大的影响。 
+
+##### 10_Flatten, Reshape, And Squeeze Explained - Tensors For Deep Learning With PyTorch
+* Tensor的reshaping操作
+  * 获取张量的形状：
+    * t.size()
+    * t.shape
+  * 获取张量的rank：
+    * len(t.shape)
+  * 获取张量的元素个数：
+    * torch.tensor(t.shape).prod()
+    * t.numel()
+  * 改变张量的形状
+    * t.reshape(xx,xx,xx)
+    * t.squeeze()：把张量长度为1的轴删除
+    * t.unsqueeze(dim=x)：在维度x上添加一个长度为1的轴       
+
+
+##### 11_CNN Flatten Operation Visualized - Tensor Batch Processing For Deep Learning
+* reshaping操作使其能够成为CNN的一个输入数据
+  * torch.stack((t1,t2,t3))后面会详细讨论
+  * torch.cat((t1,t2,t3))后面会详细讨论
+* flatten一批Tensor
+  * t.reshape(1,-1)
+  * t.reshape(-1)
+  * t.view(t.numel())
+  * t.flatten()
+  * t.flatten(start_dim=x):指定从哪个轴开始flatten 
+
+##### 12_Tensors For Deep Learning - Broadcasting And Element-Wise Operations With PyTorch
+* Tensor的元素操作
+  * 传统的加减乘除：+-*/
+  * 内置的加减乘除：t.add(t1)、t.sub(x)、t1.mul(x)、t1.div(x)
+  * 传统的比较操作：>、<、==、...
+  * 内置的比较操作：t.eq(x)、t.ge(x)、t.gt(x)、t.lt(x)、t.le(x)
+  * 一些元素操作的函数：t.abs()、t.sqrt()、t.neg()、
+* 广播的概念：不同形状的张量在元素操作中的处理方式
+  *  np.broadcast_to(2,t1.shape)：将标量值2广播成t1的形状张量
+  *  t1+2 == t1+torch.tensor(np.broadcast_to(2,t1.shape))
+
+##### 13_Code For Deep Learning - ArgMax And Reduction Tensor Ops
+* Tensor的Reduction操作：对Tensor的部分张量、规约张量的操作
+  * t.sum()
+  * t.numel()
+  * t.prod()
+  * t.mean()
+  * t.std()
+  * t.sum(dim=0)与t.sum(dim=1)的区别
+  * t.max()
+  * t.argmax()
+  * t.mean().item()：获得一个数值
+  * t.mean().tolist()
+  * t.mean().numpy()
+  * 分清当指定dim时是对啥进行操作
+
+##### 14_Dataset For Deep Learning - Fashion MNIST
+* 简单介绍了一些数据集的注意事项和MNIST数据集与Fashion-MINIST数据集的来源和组成
+
+##### 15_CNN Image Preparation Code Project - Learn To Extract, Transform, Load (ETL)
+* 神经网络流程
+  * **准备数据**
+  * 建立模型
+  * 训练模型
+  * 分析模型结果 
+* ETL：数据源**抽取**数据、**转换**数据格式、**加载**数据结构
+  * 一般可以使用torchvision可以快速对样列数据进行ETL
+  * 如：实现抽取转换：
+    *  train_set = torchvision.datasets.FashionMNIST(root='./data',train=True,download=True,transform=transforms.Compose([transforms.ToTensor()]))
+  * 实现加载：
+    * train_loader =torch.utils.data.DataLoader(train_set,batch_size=1000,shuffle=True)
+##### 16_PyTorch Datasets And DataLoaders - Training Set Exploration For Deep Learning And AI
+* datasets、DataLoader的一般使用和查看属性
+* 如何访问Dataset的数据
+  * sample=next(iter(train_set))
+  * image,label = sample
+  * plt.imshow(image.squeeze(),cmap='gray')
+* 如何访问DataLoader的数据
+  * batch = next(iter(display_loader))  
+  * images,labels = batch
+  * 再根据images的shape对数据进行抽取展示即可(有代码)
