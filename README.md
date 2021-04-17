@@ -207,67 +207,71 @@
 * 使用VsCode怎么Debug代码(建议百度谷歌实在)
 
 ##### 22_CNN Forward Method - PyTorch Deep Learning Implementation
-* 准备数据
-* 建立模型
- * 创建一个扩展nn.Module基类的神经网络类
- * 在类构造函数中，将网络的图层定义为类属性
- * **使用网络的图层属性以及nn.functional API操作来定义网络的前向传递**
-* 训练模型
-* 分析模型的结果
+* 神经网络流程
+  * 准备数据
+  * 建立模型
+    * 创建一个扩展nn.Module基类的神经网络类
+    * 在类构造函数中，将网络的图层定义为类属性
+    * **使用网络的图层属性以及nn.functional API操作来定义网络的前向传递**
+  * 训练模型
+  * 分析模型的结果
 * 调用nn.Module实例的forward()方法时，我们将调用实际的实例，而不是直接调用forward()方法=>因为重写了__call__()方法
 * 使用nn.functional API 是为了将权重和操作分开
- * 每一层都有一个权重(数据)
- * nn.functional.relu()等只是单纯的操作，不会保存权重等数据  
+  * 每一层都有一个权重(数据)
+  * nn.functional.relu()等只是单纯的操作，不会保存权重等数据  
 
 ##### 23_CNN Image Prediction With PyTorch - Forward Propagation Explained
 * 了解网络输入参数的形状要求
 * reshaping单张图片使其可以传递到网络并进行前向传播
 
 ##### 24_Neural Network Batch Processing - Pass Image Batch To PyTorch CNN
-* 准备数据
-* 建立模型
- * 理解批处理如何传递到网络
-* 训练模型
-* 分析模型的结果
+* 神经网络流程
+  * 准备数据
+  * 建立模型
+    * 理解批处理如何传递到网络
+  * 训练模型
+  * 分析模型的结果
 * 了解网络输入参数的形状要求=>确保输入的一批数据的形状符合要求
 * 查看前向传播的结果
- * 为什么是dim=1
-  * 此时输出的预测张量的形状为(batch size, number of prediction classes)
-  * dim=1是最后一个维度=>始终包含数值，而不是张量
- * 获得预测结果的正确预测的数量 
-  * preds.argmax(dim=1).eq(labels).sum().item()
+  * 为什么是dim=1
+    * 此时输出的预测张量的形状为(batch size, number of prediction classes)
+    * dim=1是最后一个维度=>始终包含数值，而不是张量
+  * 获得预测结果的正确预测的数量 
+    * preds.argmax(dim=1).eq(labels).sum().item()
 
 ##### 25_CNN Output Size Formula - Bonus Neural Network Debugging Session
-* 准备数据
-* 建立模型
- * 了解前向传播的具体转换过程
-* 训练模型
-* 分析模型的结果
+* 神经网络流程
+  * 准备数据
+  * 建立模型
+    * 了解前向传播的具体转换过程
+  * 训练模型
+  * 分析模型的结果
 * 分析数据流经每一层的形状变化
 * 分析数据流经每一个操作的数值变化
 * 卷积层输出大小公式
  * $$O_h = \frac{n_h-f_h+2p}{s}+1$$
 
 ##### 26_CNN Training With Code Example - Neural Network Programming Course
-* 准备数据
-* 建立模型
-* 训练模型
- * 计算损失和梯度，并更新权重 
-* 分析模型的结果
+* 神经网络流程
+  * 准备数据
+  * 建立模型
+  * 训练模型
+    * 计算损失和梯度，并更新权重 
+  * 分析模型的结果
 * 一个epoch的概念
- * 完成了一个完整数据集(所有批次)的前向传播和反向传播并且更新了参数的过程 
+  * 完成了一个完整数据集(所有批次)的前向传播和反向传播并且更新了参数的过程 
 * 设置允许进行梯度跟踪
- * torch.set_grad_enabled(True)  
+  * torch.set_grad_enabled(True)  
 * 理解如何计算损失
- * 使用nn.functional API的cross_entropy()函数  
+  * 使用nn.functional API的cross_entropy()函数  
 * 理解如何计算梯度
- * Pytorch会随着数据流过网络，将所有计算添加到计算图中
- * 通过计算图来计算权重的梯度
- * 计算神经网络的权重的梯度
-  * loss.backward()
- * 查看权重的梯度 
-  * network.conv1.weight.grad.shape
+  * Pytorch会随着数据流过网络，将所有计算添加到计算图中
+  * 通过计算图来计算权重的梯度
+  * 计算神经网络权重的梯度
+    * loss.backward()
+  * 查看权重的梯度 
+    * network.conv1.weight.grad.shape
 * 理解如何更新权重
- * torch.optim中优化器采用不同的算法来使用梯度对权重进行更新
- * 采用Adam优化算法：optimizer =optim.Adam(network.parameters(),lr = 0.01)
- * 进行权重更新：optimizer.step()     
+  * torch.optim中优化器采用不同的算法来使用梯度对权重进行更新
+  * 采用Adam优化算法：optimizer =optim.Adam(network.parameters(),lr = 0.01)
+  * 进行权重更新：optimizer.step()     
