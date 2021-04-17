@@ -161,3 +161,113 @@
   * batch = next(iter(display_loader))  
   * images,labels = batch
   * 再根据images的shape对数据进行抽取展示即可(有代码)
+##### 17_Build PyTorch CNN - Object Oriented Neural Networks
+* 神经网络流程
+  * 准备数据
+  * **建立模型**
+  * 训练模型
+  * 分析模型结果 
+* 面向对象的方式构建模型 
+  * nn.Module作为基类
+  * 网络的层作为类的属性 
+
+##### 18_CNN Layers - PyTorch Deep Neural Network Architecture
+* 理解卷积层的各个参数
+  * 超参数：人工选择的参数
+    * kernel_size,out_channels,out_features
+  * 数据依赖的超参数：取决于数据的参数  
+    * in_channels,in_features,out_features(输出层)
+
+##### 19_CNN Weights - Learnable Parameters In PyTorch Neural Networks
+* 理解卷积层的权重参数(可学习参数)
+  * 访问神经网络的每一层：
+    * 点表示法访问对象的属性和方法
+    * network.conv1  
+  * 访问神经网络的每一层的权重=>conv1也是一个对象，weight是conv层的内部权重张量对象
+    * network.conv1.weight =>是一个Parameter类，是一个拓展的tensor类
+  * 查看权重的形状
+    * network.conv1.weight.shape 
+  * 理解矩阵乘法的运算=>前向传播的过程
+    * weight_matrix.matmul(in_features)  
+  *  访问神经网络的每一层参数
+    * for param in network.parameters():
+    * for name,param in network.named_parameters():   
+* 方法覆盖：
+  * 重写__repr__(self)方法可以重新设置对象的字符串表示
+  * 如：print(network)
+
+##### 20_Callable Neural Networks - Linear Layers In Depth
+* 理解线性层如何工作
+  * 调用对象实例进行矩阵乘法
+* 理解神经网络如何前向传播
+  * nn.Module类重写了__call__()方法，使调用该对象实例时可以直接调用特定的方法(forward())
+  * 看源码可理解=>torch/nn/modules/module.py (version 1.0.1)
+
+##### 21_How To Debug PyTorch Source Code - Deep Learning In Python
+* 使用VsCode怎么Debug代码(建议百度谷歌实在)
+
+##### 22_CNN Forward Method - PyTorch Deep Learning Implementation
+* 准备数据
+* 建立模型
+ * 创建一个扩展nn.Module基类的神经网络类
+ * 在类构造函数中，将网络的图层定义为类属性
+ * **使用网络的图层属性以及nn.functional API操作来定义网络的前向传递**
+* 训练模型
+* 分析模型的结果
+* 调用nn.Module实例的forward()方法时，我们将调用实际的实例，而不是直接调用forward()方法=>因为重写了__call__()方法
+* 使用nn.functional API 是为了将权重和操作分开
+ * 每一层都有一个权重(数据)
+ * nn.functional.relu()等只是单纯的操作，不会保存权重等数据  
+
+##### 23_CNN Image Prediction With PyTorch - Forward Propagation Explained
+* 了解网络输入参数的形状要求
+* reshaping单张图片使其可以传递到网络并进行前向传播
+
+##### 24_Neural Network Batch Processing - Pass Image Batch To PyTorch CNN
+* 准备数据
+* 建立模型
+ * 理解批处理如何传递到网络
+* 训练模型
+* 分析模型的结果
+* 了解网络输入参数的形状要求=>确保输入的一批数据的形状符合要求
+* 查看前向传播的结果
+ * 为什么是dim=1
+  * 此时输出的预测张量的形状为(batch size, number of prediction classes)
+  * dim=1是最后一个维度=>始终包含数值，而不是张量
+ * 获得预测结果的正确预测的数量 
+  * preds.argmax(dim=1).eq(labels).sum().item()
+
+##### 25_CNN Output Size Formula - Bonus Neural Network Debugging Session
+* 准备数据
+* 建立模型
+ * 了解前向传播的具体转换过程
+* 训练模型
+* 分析模型的结果
+* 分析数据流经每一层的形状变化
+* 分析数据流经每一个操作的数值变化
+* 卷积层输出大小公式
+ * $$O_h = \frac{n_h-f_h+2p}{s}+1$$
+
+##### 26_CNN Training With Code Example - Neural Network Programming Course
+* 准备数据
+* 建立模型
+* 训练模型
+ * 计算损失和梯度，并更新权重 
+* 分析模型的结果
+* 一个epoch的概念
+ * 完成了一个完整数据集(所有批次)的前向传播和反向传播并且更新了参数的过程 
+* 设置允许进行梯度跟踪
+ * torch.set_grad_enabled(True)  
+* 理解如何计算损失
+ * 使用nn.functional API的cross_entropy()函数  
+* 理解如何计算梯度
+ * Pytorch会随着数据流过网络，将所有计算添加到计算图中
+ * 通过计算图来计算权重的梯度
+ * 计算神经网络的权重的梯度
+  * loss.backward()
+ * 查看权重的梯度 
+  * network.conv1.weight.grad.shape
+* 理解如何更新权重
+ * torch.optim中优化器采用不同的算法来使用梯度对权重进行更新
+ * 采用Adam优化算法：optimizer =optim.Adam(network.parameters(),lr = 0.01)
+ * 进行权重更新：optimizer.step()     
