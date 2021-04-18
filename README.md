@@ -1,7 +1,34 @@
 # Deep_Learning_Pytorch_WithDeeplizard
 * 主要来自Deeplizard的[Neural Network Programming - Deep Learning with PyTorch](https://deeplizard.com/learn/video/v5cngxo4mIg)
 * 是Deeplizard的中文+Colab版
-
+## 大纲
+* Pytorch的基础知识:tensor(1-13)
+* 神经网络的基本流程
+  * 准备数据：ETL(15-16)
+  * 建立模型：(17-26)
+    * 创建一个扩展nn.Module基类的神经网络类
+    * 在类构造函数中，将网络的图层定义为类属性
+    * 使用网络的图层属性以及nn.functional API操作来定义网络的前向传播
+    * 理解批处理如何传递到网络
+    * 了解前向传播的具体转换过程
+    * 计算损失和梯度，并更新权重 
+  * 训练模型(27)
+    * 建立训练循环 
+  * 分析模型结果(28-30)
+    * 建立、绘制、解释混淆矩阵=>预测和真实的比较
+    * 使用stack、concate重叠数据形状
+    * 使用TensorBoard=>模型训练过程的详细数据迭代过程
+  * 超参数调试(31-34)
+    * for循环调参
+    * 优化for=>RunBuilder类 
+    * 优化TensorBoard=>RunManager类
+  * 加速优化模型(35-39)
+    * num_worker加速模型
+    * GPU加速模型  
+    * 数据归一化优化模型
+    * 批量归一化优化模型
+    * 设置随机数种子对比模型
+---
 ##### 1_PyTorch Prerequisites - Neural Network Programming Series
 * 简单的介绍这一系列文章所需要的前置知识和将获取的知识
 ##### 2_PyTorch Explained - Python Deep Learning Neural Network API
@@ -275,3 +302,109 @@
   * torch.optim中优化器采用不同的算法来使用梯度对权重进行更新
   * 采用Adam优化算法：optimizer =optim.Adam(network.parameters(),lr = 0.01)
   * 进行权重更新：optimizer.step()     
+
+##### 27_CNN Training Loop Explained - Neural Network Code Project
+* 神经网络流程
+  * 准备数据
+  * 建立模型
+  * 训练模型
+    * **建立训练循环**
+  * 分析模型的结果 
+* 在进行反向传播之前，需要将梯度归0
+  * optimizer.zero_grad()
+  * 因为在loss.backward()之后，将会计算梯度并且添加到每一层的权重的grad中
+  * optimizer.step()更新梯度后，就需要将梯度重新置0
+
+##### 28_CNN Confusion Matrix With PyTorch - Neural Network Programming
+* 神经网络流程
+  * 准备数据
+  * 建立模型
+  * 训练模型
+  * 分析模型的结果 
+    * **建立、绘制、解释混淆矩阵**
+* 获取所有样本的预测值
+  * 此时模型应该均训练完成，因此可以无需梯度计算功能，所以可将其关闭
+* 预测值与原标签进行叠加获取有序对=>计算混淆矩阵
+* 绘制混淆矩阵  
+
+##### 29_Stack Vs Concat In PyTorch, TensorFlow & NumPy - Deep Learning Tensor Ops
+* 理解concatenating和stacking的区别并且在Pytorch,TensorFlow,Numpy分别有什么异同
+  * concatenating：沿着存在的轴进行连接
+  * stacking：创建新的轴进行连接 
+  * concatenating和stacking的联系
+* Pytorch
+  * torch.stack((x,x,x),dim=0)<==>torch.cat((x.unsqueeze(0),x.unsqueeze(0),x.unsqueeze(0)),dim=0)
+* TensorFlow：axis<==pytorch中的dim
+  * tf.stack((x,x,x),axis=0)<==>tf.concat((tf.expand_dims(x,0),tf.expand_dims(x,0),tf.expand_dims(x,0)),axis=0)
+* Numpy
+  * np.stack((x,x,x),axis=0)<==>np.concatenate((np.expand_dims(x,0),np.expand_dims(x,0),np.expand_dims(x,0),axis=0)
+* stack、concat的使用
+  * 将单张图像合并成一个批处理
+  * 将多个批次图像合成一个批处理
+  * 单张图像和多个批次图像合成一个批处理
+
+##### 30_TensorBoard With PyTorch - Visualize Deep Learning Metrics
+* 神经网络流程
+  * 准备数据
+  * 建立模型
+  * 训练模型
+  * 分析模型的结果 
+    * **使用TensorBoard**
+* 理解使用TensorBoard进行可视化各种指标
+  * 如何使用？(看代码) 
+
+##### 31_Hyperparameter Tuning And Experimenting - Training Deep Neural Networks
+* 神经网络流程
+  * 准备数据
+  * 建立模型
+  * 训练模型
+  * 分析模型的结果 
+  * 超参数调试
+* 使用for循环进行超参数遍历调试 
+* 使用TensorBoard分别进行可视化
+
+##### 32_Training Loop Run Builder - Neural Network Experimentation Code
+* 使用面向对象实现构建RunBuilder类=>优化for循环调超参
+* RunBuilder类：
+  * 使用namedtuple和product来包装超参数 
+
+##### 33_CNN Training Loop Refactoring - Simultaneous Hyperparameter Testing
+* 使用面向对象思想抽取出RunManager类=>优化TensorBoard的记录
+* RunManager类
+  * 使训练循环更加简洁，使用专门的类来保存记录训练信息 
+
+##### 34_PyTorch DataLoader Num_workers - Deep Learning Speed Limit Increase
+* 使用多线程的功能进行加速训练过程
+  * 使用DataLoader类的num_workers属性 
+  * 使用num_workers和batch_size来进行调参=>选择最佳结果
+
+##### 35_PyTorch On The GPU - Training Neural Networks With CUDA
+* 使用GPU进行加速训练过程
+  * 数据转GPU：
+    * x.to('cuda')=>推荐使用
+    * x.cuda() 
+  * 数据转CPU：
+    * x.to('cpu')=>推荐使用
+    * x.cpu() 
+  * 查看数据在什么设备中计算
+    * x.device
+* 将网络实例移动到GPU
+  * network.to('cuda')=>无需新的实例来接收，是就地重新分配的
+* 重写RunManager()类实现与设备无关的Pytorch代码
+  * torch.cuda.is_available()     
+
+#####　36_PyTorch Dataset Normalization - Torchvision.Transforms.Normalize
+*　如何归一化数据集，及带来何种影响？
+
+##### 37_PyTorch DataLoader Source Code - Debugging Session
+* 理解在DataLoader在归一化数据时如何发挥作用
+* 查看DataLoader源码=>建议自行百度谷歌理解较好
+
+##### 38_PyTorch Sequential Models - Neural Networks Made Easy
+* 使用Pytorch 的nn.Sequential构建神经网络的便捷性
+* 设置Pytorch的随机数种子，使网络的初始化参数相同
+  * torch.manual_seed(50)
+
+##### 39_Batch Norm In PyTorch - Add Normalization To Conv Net Layers
+* 理解批量归一化及如何实现=>利用均值、标准差来调整神经网络的中间输出，使其保存稳定
+* nn.BatchNorm2d(x)
